@@ -1,4 +1,6 @@
-mod closures;
-mod iterators;
+pub mod closures;
+pub mod iterators;
 
-fn main() {}
+fn main() {
+    println!("CIS198 Lecture 7: Closures and Iterators");
+}
