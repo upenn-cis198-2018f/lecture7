@@ -1,6 +1,4 @@
-# Lecture 7: Functional Language Features
-
-**(Closures and Iterators)**
+# Lecture 7: Functional Programming with Closures and Iterators
 
 ## Reminders
 
