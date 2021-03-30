@@ -283,12 +283,38 @@ where
     For example, do_twice can't accept an FnOnce,
     but it could accept an FnMut if you so desired.
     And log_input_output can accept FnOnce (and probably should to be more general).
-
-    >> STOPPED HERE AT END OF LECTURE 7 PART 1.
 */
 
 /*
-    QUIZ: What will happen if we try to compile this code?
+    ========== Start of Lecture 7 Part 2 ==========
+*/
+
+/*
+    QUIZ 1: What does the following code print?
+*/
+
+pub fn use_fn<F: Fn()>(f: F) {
+    println!("Hello 1!");
+    f();
+}
+
+#[test]
+pub fn test_use_fn() {
+    let closure = {
+        let two = "2";
+        let three = "3";
+        println!("Hello {}!", two);
+        move || println!("Hello {}!", three)
+    };
+    use_fn(closure);
+    // To show output from the test
+    // assert!(false);
+}
+
+// Note on 'move'
+
+/*
+    QUIZ 2: What will happen if we try to compile this code?
 */
 
 pub fn example_do_all<F: Fn() -> String>(actions: Vec<F>) {
@@ -297,12 +323,13 @@ pub fn example_do_all<F: Fn() -> String>(actions: Vec<F>) {
     }
 }
 
+// #[test]
 // fn test_example_do_all() {
 //     let action1 = || {
 //         format!("2 + 2 = {}", 2 + 2)
 //     };
 //     let action2 = || {
-//         let name = "Caleb"; // = get_name_from_user()
+//         let name = "Caleb";
 //         format!("Hello, {}", name)
 //     };
 //     example_do_all(vec![action1, action2]);
@@ -321,8 +348,30 @@ pub fn example_do_all<F: Fn() -> String>(actions: Vec<F>) {
 */
 
 /*
-    The impl Trait syntax
+    Useful syntax for trait bounds
+
+    Trait bounds can get a bit hard to read,
+    and there are some ways to improve the syntax:
+
+    - The Where syntax
+      See do_twice and log_input_output for how this is used.
+
+      fn example<A: Trait1, B: Trait2>(a: A, b: B) -> { ... }
+
+      fn example<A, B>(a: A, b: B)
+      where
+          A: Trait1,
+          b: Trait2,
+      {
+          ...
+      }
+
+      With multiple traits, function traits like say Fn(usize, Vec<usize>) -> String
+      the first syntax gets quite clunky.
+
+    - The impl Trait syntax
 
     EXERCISE:
-    5. Write a function for a queue which returns a "print-and-clear-queue" closure.
+    5. Write a function for a vector which applies a closure to every element.
+    6. Write a function for a vector which returns a "print-and-clear" closure.
 */

@@ -5,7 +5,7 @@
 - Homework 2 was graded -- if you still have questions about your grade that you want me to look into, please let me know and direct me to the GitHub feedback thread!
 
 - Homework 3 [here](https://github.com/upenn-cis198/homework3).
-**Due date will be delayed: Monday, April 5 (will announce on Piazza)**
+**Due delayed to Monday, April 5 (will announce on Piazza)**
 
 - Remember to email **before** the deadline to use late days (either the 4 freebies or additional late days) -- so that we make sure to delay grading your assignment.
 
@@ -33,6 +33,4 @@ you define objects that can be iterated over in a for loop. We will discuss:
 
 - How to use iterators to write concise, clean code in Rust;
 
-- Why you would want to use iterators for your own data and types; and
-
-- How to define your own iterator implementing the `Iterator` trait.
+- How to define iterators for your own data types, using the `Iterator` and `IntoIterator` traits.
