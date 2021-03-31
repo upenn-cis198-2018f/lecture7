@@ -7,7 +7,11 @@
 - Homework 3 [here](https://github.com/upenn-cis198/homework3).
 **Due delayed to Monday, April 5 (will announce on Piazza)**
 
-- Remember to email **before** the deadline to use late days (either the 4 freebies or additional late days) -- so that we make sure to delay grading your assignment.
+  - Remember to email **before** the deadline to use late days (either the 4 freebies or additional late days) -- so that we make sure to delay grading your assignment.
+
+  - Remember to run `cargo clippy` and `cargo fmt`
+
+- **Final project team choices also due April 5** -- see Piazza.
 
 ## Outline of lecture
 
