@@ -74,7 +74,8 @@ pub fn example_iter_mut() {
 
 pub fn example_into_iter() {
     // Conceptually same as example_for
-    // .iter() is a method implemented for the Vec type (the name is not special)
+    // .iter() is a method implemented for the Vec type
+    //     (the name 'iter' is not special)
     // .into_iter() is a method which is part of the IntoIterator trait.
     let v = vec![1, 2, 3];
     for x in v.into_iter() {
@@ -175,7 +176,7 @@ fn test_sum_squares_lt() {
 }
 
 // Recap: particularly useful methods in the Iterator trait are:
-//     .map(), .take(), .take_while, .filter()
+//     .map(), .take(), .take_while(), .filter()
 
 /*
     We can also write functions that manipulate iterators directly.
@@ -192,7 +193,9 @@ fn test_sum_squares_lt() {
     if we are returning an iterator...
 
     Example return type in copy_increasing:
-    Copied<FlatMap<Enumerate<std::slice::Iter<'_, usize>>, std::iter::Take<std::iter::Repeat<&usize>>, [closure@src/iterators.rs:142:19: 144:10]>>
+        Copied<FlatMap<Enumerate<std::slice::Iter<'_, usize>>,
+        std::iter::Take<std::iter::Repeat<&usize>>,
+        [closure@src/iterators.rs:142:19: 144:10]>>
     D:
 
     - Here the impl Trait syntax comes in handy again.
@@ -206,7 +209,7 @@ pub fn copy_increasing_iter1(v: &[usize]) -> impl Iterator<Item = usize> + '_ {
 
 // Note that the iterator needs to live as long as the input data v: &[usize]
 // So we use '_ to tell Rust to figure out the appropriate lifetime.
-// Alternatively we can write a function where both input and output are iterators:
+// Alternatively we can write a function where both input/output are iterators:
 
 pub fn copy_increasing_iter2(
     v: impl Iterator<Item = usize>,
@@ -215,7 +218,7 @@ pub fn copy_increasing_iter2(
 }
 
 // Could also for the input do it with a type argument T and a trait bound
-// T: impl Iterator<Item = usize>,
+// T: Iterator<Item = usize>,
 // but this doesn't work for the return type, as we saw with Fn traits.
 
 /*
@@ -302,7 +305,7 @@ impl<'a> Iterator for SongIterator<'a> {
 
 // Finally we need a way to connect our SongUserProfile somehow
 // with the SongIterator object
-// This is what the standard libarary containers like Vec and HashMap have
+// This is what the standard library containers like Vec and HashMap have
 // a .iter() method for
 
 impl SongUserProfile {
@@ -317,9 +320,10 @@ impl SongUserProfile {
     - We have a custom data structure SongUserProfile
     - We implemented a separate iterator type, SongIterator, that can be used
       to generate songs to play, using the profile
-    - We implemented the Iterator trait for SongIterator (NOT for SongUserProfile)
-    - Finally, we made a method on SongUserProfile that initializes a SongIterator
-      to iterate over the liked songs in the user profile.
+    - We implemented the Iterator trait for SongIterator
+        (NOT for SongUserProfile!)
+    - Finally, we made a method on SongUserProfile that initializes a
+      SongIterator to iterate over the liked songs in the user profile.
 
     This is the general recipe for implementing an iterator over a custom
     data structure.

@@ -315,7 +315,7 @@ pub fn test_use_fn() {
 // Note on 'move'
 // If 'move' is removed in the above code, it fails to compile
 // Move is used to capture local variables and data and "move" ownership
-// of them into the closure. So, a closure, unlike a normal function, own and
+// of them into the closure. So, a closure, unlike a normal function, owns and
 // contains some information about its environment, e.g. data that is needed
 // inside the closure.
 
@@ -328,7 +328,7 @@ where
     F: Fn() -> String,
 {
     for (i, action) in actions.iter().enumerate() {
-        println!("Result of action {}: {}", i, action())
+        println!("Result of action {}: {}", i, action());
     }
 }
 
@@ -376,7 +376,7 @@ where
 
 pub fn example_do_all_fixed(actions: Vec<Box<dyn Fn() -> String>>) {
     for (i, action) in actions.iter().enumerate() {
-        println!("Result of action {}: {}", i, action())
+        println!("Result of action {}: {}", i, action());
     }
 }
 
@@ -432,7 +432,6 @@ fn test_example_do_all_fixed() {
       {
           assert_eq!(x.clone(), x.clone());
       }
-
 
     - The impl Trait syntax
 
