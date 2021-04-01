@@ -307,17 +307,26 @@ pub fn test_use_fn() {
         move || println!("Hello {}!", three)
     };
     use_fn(closure);
+
     // To show output from the test
     // assert!(false);
 }
 
 // Note on 'move'
+// If 'move' is removed in the above code, it fails to compile
+// Move is used to capture local variables and data and "move" ownership
+// of them into the closure. So, a closure, unlike a normal function, own and
+// contains some information about its environment, e.g. data that is needed
+// inside the closure.
 
 /*
     QUIZ 2: What will happen if we try to compile this code?
 */
 
-pub fn example_do_all<F: Fn() -> String>(actions: Vec<F>) {
+pub fn example_do_all_broken<F>(actions: Vec<F>)
+where
+    F: Fn() -> String,
+{
     for (i, action) in actions.iter().enumerate() {
         println!("Result of action {}: {}", i, action())
     }
@@ -332,20 +341,58 @@ pub fn example_do_all<F: Fn() -> String>(actions: Vec<F>) {
 //         let name = "Caleb";
 //         format!("Hello, {}", name)
 //     };
-//     example_do_all(vec![action1, action2]);
+//     example_do_all_broken(vec![action1, action2]);
+//     // Type error!
+//     // action1 and action2 are not the same type! They are different functions,
+//     // different data, different size, etc.
 // }
 
 /*
+    Problem: every function (or closure) is its own type!
+
+    This is feature, not a bug -- because each function is its own type,
+    Rust doesn't have to dynamically figure out what a function is at runtime;
+    it knows at compile time exactly what code and data (for closures)
+    a function contains, how to evaluate the function, the function's lifetime,
+    etc.
+
+    (Limitation of the Fn(args) -> return value trait.)
+
     Though the Fn trait is most ideal, Rust has other ways to specify
     function arguments.
 
     - Dynamic function objects
+
+      Box<dyn Trait>
+      Dynamic object which implements Trait.
+      -> "Dynamic" meaning that the exact type of the object is stored and looked up
+         at runtime. (E.g. like a Python object.)
 
     - Function pointers
 
     EXERCISE:
     4. Rewrite example_do_all in a way that works.
 */
+
+pub fn example_do_all_fixed(actions: Vec<Box<dyn Fn() -> String>>) {
+    for (i, action) in actions.iter().enumerate() {
+        println!("Result of action {}: {}", i, action())
+    }
+}
+
+#[test]
+fn test_example_do_all_fixed() {
+    let action1 = || format!("2 + 2 = {}", 2 + 2);
+    let action2 = || {
+        let name = "Caleb";
+        format!("Hello, {}", name)
+    };
+    example_do_all_fixed(vec![Box::new(action1), Box::new(action2)]);
+    // Type error!
+    // action1 and action2 are not the same type! They are different functions,
+    // different data, different size, etc.
+    // assert!(false);
+}
 
 /*
     Useful syntax for trait bounds
@@ -356,22 +403,80 @@ pub fn example_do_all<F: Fn() -> String>(actions: Vec<F>) {
     - The Where syntax
       See do_twice and log_input_output for how this is used.
 
-      fn example<A: Trait1, B: Trait2>(a: A, b: B) -> { ... }
+      fn example<A: Trait1, B: Trait2, F: Fn(...) -> ...>(a: A, b: B, f: F) -> { ... }
 
-      fn example<A, B>(a: A, b: B)
+      fn example<A, B, F>(a: A, b: B, f: F)
       where
           A: Trait1,
-          b: Trait2,
+          B: Trait2,
+          F: Fn(...) -> ...,
       {
           ...
       }
 
+      I usually prefer 'where' clauses, but for simple functions like
+      pub fn clone_x<X: Clone>(x: X) {
+          x.clone();
+          x.clone();
+      }
+      I don't bother with where.
+
       With multiple traits, function traits like say Fn(usize, Vec<usize>) -> String
       the first syntax gets quite clunky.
 
+      Multiple trait bounds on the same type variable with '+':
+
+      pub fn example<X>(x: X)
+      where
+          X: Clone + Debug + Eq,
+      {
+          assert_eq!(x.clone(), x.clone());
+      }
+
+
     - The impl Trait syntax
+
+      In place of a type argument like F, or a return value, you can put
+      'impl Trait'
+      'impl Clone'
+      'impl Fn() -> String'
+
+      Compiler figures out what you mean and generates the trait bound code for you
 
     EXERCISE:
     5. Write a function for a vector which applies a closure to every element.
     6. Write a function for a vector which returns a "print-and-clear" closure.
 */
+
+// Syntax we are used to
+// pub fn apply_to_all<X, F, Y>(v: &[X], f: F) -> Vec<Y>
+// where
+//     F: Fn(&X) -> Y,
+
+pub fn apply_to_all<X, Y>(v: &[X], f: impl Fn(&X) -> Y) -> Vec<Y> {
+    let mut result = Vec::new();
+    for x in v {
+        result.push(f(x));
+    }
+    result
+}
+
+// For an input argument, this is just convenience
+// But for a return argument, it's actually a powerful feature that you can't
+// really do without
+pub fn return_print_and_clear(mut v: Vec<usize>) -> impl FnOnce() {
+    // Return a closure
+    // Move the vector v into the closure
+    move || {
+        for &x in &v {
+            println!("{}", x);
+        }
+        v.clear();
+        drop(v); // not necessary to write explicitly
+    }
+}
+
+// Recap: impl Trait means:
+// - I know this is a type that implements Trait, but I don't know
+//   (or don't want to specify) exactly what type it is.
+//   So, please figure it out for me.

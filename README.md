@@ -5,7 +5,7 @@
 - Homework 2 was graded -- if you still have questions about your grade that you want me to look into, please let me know and direct me to the GitHub feedback thread!
 
 - Homework 3 [here](https://github.com/upenn-cis198/homework3).
-**Due delayed to Monday, April 5 (will announce on Piazza)**
+**Due date delayed to Monday, April 5 (will announce on Piazza)**
 
   - Remember to email **before** the deadline to use late days (either the 4 freebies or additional late days) -- so that we make sure to delay grading your assignment.
 
